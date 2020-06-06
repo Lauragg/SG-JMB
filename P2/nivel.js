@@ -1,0 +1,127 @@
+class Nivel extends THREE.Object3D{
+  constructor(numBolas,coloresBolas,spline){
+    super();
+
+    // Animación bolas y camino a seguir
+    this.tiempoAnterior = Date.now();
+    this.spline = spline;
+    var velocidad = 5; // unidades/s
+    var splineLongitud = this.spline.getLength();
+    this.tiempoFinRecorrido = splineLongitud/velocidad;
+    this.animacion = true;
+
+    // Elementos del nivel
+    this.superficie = this.createSuperficie();
+
+    this.coloresBolas=coloresBolas;
+    this.bolas = this.createBolas(numBolas,splineLongitud);
+
+    this.disparador = this.createDisparador();
+
+    this.decoraciones = this.createDecoraciones();
+
+    this.add(this.superficie);
+    this.add(this.bolas);
+    //this.add(this.disparador);
+    //this.add(this.decoraciones);
+  }
+
+  createSuperficie(){
+    // Creamos las geometrías con las que operaremos.
+    var cuadrado = new THREE.BoxGeometry(50,1,50);
+    //var circulo = new THREE.CircleGeometry(); Demasiado bonito como para ser cierto
+    var shape= new THREE.Shape();
+    shape.moveTo(-1,0.5);
+    shape.quadraticCurveTo(-1,-0.5,0,-0.5);
+    shape.quadraticCurveTo(1,-0.5,1,0.5);
+    shape.lineTo(-1,0.5);
+
+    var semicirculo = new THREE.ExtrudeGeometry(
+      shape,
+      {bevelEnabled: false, steps: 60, extrudePath: this.spline}
+    );
+
+    // Operamos con las geometrías
+    var base=new ThreeBSP(cuadrado)
+      .subtract(new ThreeBSP(semicirculo))
+      .toGeometry();
+
+    // Creamos los objetos
+    var plano = new THREE.Mesh(
+      base,
+      new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load('../imgs/wood.jpg') } )
+    );
+
+    /*var camino = new THREE.Mesh(semicirculo, new THREE.MeshPhongMaterial({color: 0xf08080}));
+
+    var superficie = new THREE.Object3D();
+    superficie.position.set(0,-0.5,0);
+
+    superficie.add(plano);
+    superficie.add(camino);*/
+    plano.position.set(0,-0.5,0);
+
+    return plano;
+  }
+
+  createDisparador(){
+
+  }
+
+  createBolas(numBolas,splineLongitud){
+    var bolas = new THREE.Object3D();
+    bolas.vector = new Array();
+
+    for (var i = 0; i < numBolas; i++) {
+      var bola=this.createBola(this.coloresBolas);
+      bola.avanzado=-2*i/splineLongitud;
+      bolas.vector.push(bola);
+      bolas.add(bola);
+    }
+
+    return bolas;
+  }
+
+  createDecoraciones(){
+
+  }
+
+
+  createBola(){
+    var color=Math.floor(Math.random()*this.coloresBolas.length); // Número aleatorio entre 0 y length - 1
+    var bola = new THREE.Mesh(
+      new THREE.SphereGeometry(),
+      new THREE.MeshPhongMaterial({color: this.coloresBolas[color]})
+    );
+    bola.position.set(0,-10,0);
+    return bola;
+  }
+
+  update(){
+    if (this.animacion) {
+      var that = this;
+
+      var tiempoActual = Date.now();
+      var time = (tiempoActual - this.tiempoAnterior)/1000; // En segundos
+      var avance = (time % this.tiempoFinRecorrido)/this.tiempoFinRecorrido; // [0,1]
+
+      this.bolas.vector.forEach((bola, i) => {
+        bola.avanzado+=avance;
+
+        if (bola.avanzado >= 1) {
+          displayEndGame();
+          that.animacion = false;
+
+        }else if(bola.avanzado >= 0){
+          var posicion=that.spline.getPointAt(bola.avanzado);
+          bola.position.copy(posicion);
+          posicion.add(that.spline.getTangentAt(bola.avanzado));
+          bola.lookAt(posicion);
+        }
+
+      });
+
+      this.tiempoAnterior = tiempoActual;
+    }
+  }
+}

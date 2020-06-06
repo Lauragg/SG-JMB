@@ -1,0 +1,250 @@
+/*
+
+  La clase central del proyecto. Aquí se gestionan los elementos comunes de cada nivel y se genera el vector de niveles.
+  La escena principal del juego se encuentra aquí y cada nivel variará según los Object3D.
+
+  Vamos a comenzar haciendo un único nivel y cuando este funcione haremos varios niveles.
+  Para el avance de los niveles actualmente hay dos ideas:
+  - Añadir y quitar el nivel i de la escena de nuestro sistema conforme vayamos avanzado. Mi preferencia.
+      + Debería de ser con un this.nivelActual=this.niveles[i];
+      + Crear cada nivel conforme vayamos avanzando vs Crearlos todos al inicio.
+  - Estar todos puestos y cambiar la posición de la cámara. Se usa en varios juegos pero me parece cutre.
+
+  Para las colisiones luego te comento lo que he pensado.
+
+
+*/
+
+class System extends THREE.Scene{
+  constructor(myCanvas) {
+    super();
+
+    // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
+    this.renderer = this.createRenderer(myCanvas);
+
+    // Creamos las luces.
+    this.createLights();
+
+    // Creamos la cámara.
+    this.createCamera();
+
+    this.niveles = this.defineNiveles();
+
+    this.actualizarNivel();
+
+    this.add(this.nivelActual);
+
+  }
+
+  /*
+    Aquí definiremos los distintos parámetros que crearán los distintos niveles.
+  */
+  defineNiveles(){
+    var niveles = new Array();
+    /*
+      Colores disponibles:
+        Coral -> 0xff7f50
+        CornflowerBlue -> 0x6495ed
+        Chartreuse -> 0x7fff00
+        DarkOrange -> 0xff8c00
+        DarkOrchid -> 0x9932cc
+        GreenYellow -> 0xadff2f
+        SpringGreen -> 0x00ff7f
+        LemonChiffon -> 0xfffacd
+    */
+
+    /*
+      Nivel 1
+    */
+    var spline = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-60,0,0),
+      new THREE.Vector3(60,0,0)
+    ]);
+
+    var coloresBolas = [0xff7f50,0x6495ed,0x7fff00,0xff8c00];
+
+    niveles.push(new contVarNiveles(20,coloresBolas,spline));
+
+    return niveles;
+  }
+
+  /*
+    FIXME: Actualmente es copypaste de la P1.
+    Hay que configurarlo para el tema de SOMBRAS, LUCES, etc....
+    Últimos temas de teoría.
+  */
+  createRenderer (myCanvas) {
+    // Se recibe el lienzo sobre el que se van a hacer los renderizados. Un div definido en el html.
+
+    // Se instancia un Renderer   WebGL
+    var renderer = new THREE.WebGLRenderer();
+
+    // Se establece un color de fondo en las imágenes que genera el render
+    renderer.setClearColor(new THREE.Color(0xEEEEEE), 1.0);
+
+    // Se establece el tamaño, se aprovecha la totalidad de la ventana del navegador
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    // La visualización se muestra en el lienzo recibido
+    $(myCanvas).append(renderer.domElement);
+
+    return renderer;
+  }
+
+
+  /*
+    FIXME: Actualmente es copypaste de la P1.
+    Hay que configurarlo para el tema de SOMBRAS, LUCES, etc....
+    Últimos temas de teoría.
+  */
+  createLights () {
+    // Se crea una luz ambiental, evita que se vean complentamente negras las zonas donde no incide de manera directa una fuente de luz
+    // La luz ambiental solo tiene un color y una intensidad
+    // Se declara como   var   y va a ser una variable local a este método
+    //    se hace así puesto que no va a ser accedida desde otros métodos
+    var ambientLight = new THREE.AmbientLight(0xccddee, 0.35);
+    // La añadimos a la escena
+    this.add (ambientLight);
+
+    // Se crea una luz focal que va a ser la luz principal de la escena
+    // La luz focal, además tiene una posición, y un punto de mira
+    // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
+    // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
+    this.spotLight = new THREE.SpotLight( 0xffffff, 0.5);//this.guiControls.lightIntensity );
+    this.spotLight.position.set( 60, 60, 40 );
+    this.add (this.spotLight);
+  }
+
+  /*
+    FIXME: Actualmente es copypaste de la P1.
+    Hay que configurarlo para el tema de SOMBRAS, LUCES, etc....
+    Últimos temas de teoría.
+  */
+  createCamera () {
+    // Para crear una cámara le indicamos
+    //   El ángulo del campo de visión vértical en grados sexagesimales
+    //   La razón de aspecto ancho/alto
+    //   Los planos de recorte cercano y lejano
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    // También se indica dónde se coloca
+    this.camera.position.set (0, 60, 1);// P2: Queremos verlo desde arriba.
+    // Y hacia dónde mira
+    var look = new THREE.Vector3 (0,0,0);
+    this.camera.lookAt(look);
+    this.add (this.camera);
+
+    // Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
+    this.cameraControl = new THREE.TrackballControls (this.camera, this.renderer.domElement);
+
+    // Se configuran las velocidades de los movimientos
+    this.cameraControl.rotateSpeed = 5;
+    this.cameraControl.zoomSpeed = -2;
+    this.cameraControl.panSpeed = 0.5;
+    // Debe orbitar con respecto al punto de mira de la cámara
+    this.cameraControl.target = look;
+  }
+
+  /*
+    COPYPASTE P1 8D
+  */
+  onWindowResize () {
+    // Este método es llamado cada vez que el usuario modifica el tamapo de la ventana de la aplicación
+    // Hay que actualizar el ratio de aspecto de la cámara
+    this.setCameraAspect (window.innerWidth / window.innerHeight);
+
+    // Y también el tamaño del renderizador
+    this.renderer.setSize (window.innerWidth, window.innerHeight);
+  }
+  setCameraAspect (ratio) {
+    // Cada vez que el usuario modifica el tamaño de la ventana desde el gestor de ventanas de
+    // su sistema operativo hay que actualizar el ratio de aspecto de la cámara
+    this.camera.aspect = ratio;
+    // Y si se cambia ese dato hay que actualizar la matriz de proyección de la cámara
+    this.camera.updateProjectionMatrix();
+  }
+
+  /*
+    COPYPASTE P1 8D
+  */
+  update () {
+    // Este método debe ser llamado cada vez que queramos visualizar la escena de nuevo.
+
+    // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
+    // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
+    requestAnimationFrame(() => this.update())
+
+    // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
+    this.renderer.render (this, this.camera);
+
+    // Se actualizan los elementos de la escena para cada frame
+    // Se actualiza la intensidad de la luz con lo que haya indicado el usuario en la gui
+    //this.spotLight.intensity = this.guiControls.lightIntensity;
+
+    // Se actualiza la posición de la cámara según su controlador
+    this.cameraControl.update();
+
+    // Se actualiza el resto del modelo
+    this.nivelActual.update();
+  }
+
+  actualizarNivel(){
+    this.nivelActual = new Nivel(
+      this.niveles[0].numBolas,
+      this.niveles[0].coloresBolas,
+      this.niveles[0].spline
+    );
+  }
+
+  reintentar(){
+    this.niveles = this.defineNiveles();
+    this.actualizarNivel();
+    displayEndGame();
+  }
+}
+
+/*
+  Para ahorrar líneas de código, crea un elemento del vector niveles con
+  los parámetros indicados.
+*/
+class contVarNiveles {
+    constructor(numBolas,coloresBolas,spline) {
+      this.numBolas=numBolas;
+      this.coloresBolas=coloresBolas;
+      this.spline=spline;
+    }
+  }
+
+
+
+
+/// La función   main
+/*$(function () {
+
+ // Se instancia la escena pasándole el  div  que se ha creado en el html para visualizar
+ var scene = new System("#WebGL-output");
+
+ // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
+ window.addEventListener ("resize", () => scene.onWindowResize());
+
+ // Que no se nos olvide, la primera visualización.
+ scene.update();
+});*/
+
+ var scene = new System("#WebGL-output");
+
+ function start(scene){
+   //scene = new System("#WebGL-output");
+   var startgame = document.getElementById('StartGame');
+   startgame.style.display = "none";
+   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
+   window.addEventListener ("resize", () => scene.onWindowResize());
+
+   // Que no se nos olvide, la primera visualización.
+   scene.update();
+ }
+
+ function restart(scene){
+   //start(scene);
+   scene.reintentar();
+   displayEndGame();
+ }
