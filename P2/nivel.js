@@ -67,15 +67,18 @@ class Nivel extends THREE.Object3D{
   createDisparador(){
     var disparador = new THREE.Object3D();
     disparador.bola = this.createBola();
+    disparador.apuntador = new THREE.Mesh(new THREE.BoxGeometry(4,1,1), new THREE.MeshPhongMaterial({color: 0xf08080}));
     disparador.disparo = false;
-    disparador.vectorAvance = new THREE.Vector3(0,0,0);
+    disparador.position.set(0,1,0);
+    //disparador.vectorAvance = new THREE.Vector3(0,0,0);
 
     disparador.add(disparador.bola);
+    disparador.add(disparador.apuntador);
 
     return disparador;
   }
 
-  disparar(event){
+  /*disparar(event){
     var mouse = new THREE.Vector3(
       (event.clientX / window.innerWidth)*2-1,
       0,
@@ -87,6 +90,17 @@ class Nivel extends THREE.Object3D{
     this.disparador.vectorAvance = worldPosition.sub(mouse);
     console.log(this.disparador.vectorAvance);
     this.disparador.disparo=true;
+  }
+*/
+  eventos(event){
+    var tecla = event.which || event.keyCode;
+    if (String.fromCharCode(tecla) == "A") {
+      this.disparador.rotation+=0.01;
+    }else if (String.fromCharCode(tecla) == "D") {
+      this.disparador.rotation-=0.01;
+    }else if (String.fromCharCode(tecla) == "" || String.fromCharCode(tecla) == " ") {
+      this.disparador.disparo = true;
+    }
   }
 
   createBolas(numBolas,splineLongitud){
@@ -149,7 +163,7 @@ class Nivel extends THREE.Object3D{
         Disparo
       */
       if (this.disparador.disparo) {
-        this.disparador.bola.translateOnAxis(this.disparador.vectorAvance,this.velocidad*time);
+        this.disparador.bola.translateOnAxis(new Vector3(1,0,0),this.velocidad*time);
       }
 
       this.tiempoAnterior = tiempoActual;

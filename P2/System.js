@@ -35,7 +35,7 @@ class System extends THREE.Scene{
     this.actualizarNivel(); // Define y actualiza el valor de this.nivelActual
 
     var that = this;
-    window.addEventListener("click", (event) => that.nivelActual.disparar(event));
+    window.addEventListener("keypress", (event) => that.nivelActual.eventos(event));
 
   }
 
