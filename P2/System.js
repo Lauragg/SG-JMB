@@ -65,8 +65,9 @@ class System extends THREE.Scene{
     ]);
 
     var coloresBolas = [0xff7f50,0x6495ed,0x7fff00,0xff8c00];
+    var posDisparador = new THREE.Vector3(0,1,-10);
 
-    niveles.push(new contVarNiveles(20,coloresBolas,spline));
+    niveles.push(new contVarNiveles(20,coloresBolas,spline,posDisparador,5)); //numBolas y velocidad
 
     return niveles;
   }
@@ -198,7 +199,9 @@ class System extends THREE.Scene{
     this.nivelActual = new Nivel(
       this.niveles[this.indiceNivel].numBolas,
       this.niveles[this.indiceNivel].coloresBolas,
-      this.niveles[this.indiceNivel].spline
+      this.niveles[this.indiceNivel].spline,
+      this.niveles[this.indiceNivel].posDisparador,
+      this.niveles[this.indiceNivel].velocidad
     );
     this.indiceNivel++;
     this.add(this.nivelActual);
@@ -216,10 +219,12 @@ class System extends THREE.Scene{
   los parámetros indicados.
 */
 class contVarNiveles {
-    constructor(numBolas,coloresBolas,spline) {
+    constructor(numBolas,coloresBolas,spline,posDisparador,velocidad) {
       this.numBolas=numBolas;
       this.coloresBolas=coloresBolas;
       this.spline=spline;
+      this.posDisparador=posDisparador;
+      this.velocidad=velocidad;
     }
   }
 
