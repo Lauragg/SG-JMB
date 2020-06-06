@@ -30,9 +30,9 @@ class System extends THREE.Scene{
 
     this.niveles = this.defineNiveles();
 
-    this.actualizarNivel();
+    this.indiceNivel = 0;
 
-    this.add(this.nivelActual);
+    this.actualizarNivel();
 
   }
 
@@ -188,15 +188,21 @@ class System extends THREE.Scene{
   }
 
   actualizarNivel(){
+    if (typeof this.nivelActual != "undefined") {
+      this.remove(this.nivelActual);
+    }
+
     this.nivelActual = new Nivel(
-      this.niveles[0].numBolas,
-      this.niveles[0].coloresBolas,
-      this.niveles[0].spline
+      this.niveles[this.indiceNivel].numBolas,
+      this.niveles[this.indiceNivel].coloresBolas,
+      this.niveles[this.indiceNivel].spline
     );
+    this.indiceNivel++;
+    this.add(this.nivelActual);
   }
 
   reintentar(){
-    this.niveles = this.defineNiveles();
+    this.indiceNivel = 0;
     this.actualizarNivel();
     displayEndGame();
   }
