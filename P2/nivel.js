@@ -5,9 +5,9 @@ class Nivel extends THREE.Object3D{
     // Animación bolas y camino a seguir
     this.tiempoAnterior = Date.now();
     this.spline = spline;
-    var velocidad = 5; // unidades/s
+    this.velocidad = 5; // unidades/s
     var splineLongitud = this.spline.getLength();
-    this.tiempoFinRecorrido = splineLongitud/velocidad;
+    this.tiempoFinRecorrido = splineLongitud/this.velocidad;
     this.animacion = true;
 
     // Elementos del nivel
@@ -22,7 +22,7 @@ class Nivel extends THREE.Object3D{
 
     this.add(this.superficie);
     this.add(this.bolas);
-    //this.add(this.disparador);
+    this.add(this.disparador);
     //this.add(this.decoraciones);
   }
 
@@ -65,7 +65,28 @@ class Nivel extends THREE.Object3D{
   }
 
   createDisparador(){
+    var disparador = new THREE.Object3D();
+    disparador.bola = this.createBola();
+    disparador.disparo = false;
+    disparador.vectorAvance = new THREE.Vector3(0,0,0);
 
+    disparador.add(disparador.bola);
+
+    return disparador;
+  }
+
+  disparar(event){
+    var mouse = new THREE.Vector3(
+      (event.clientX / window.innerWidth)*2-1,
+      0,
+      1-2*(event.clientY / window.innerHeight)
+    );
+
+    var worldPosition = new THREE.Vector3();
+    this.disparador.bola.getWorldPosition(worldPosition)
+    this.disparador.vectorAvance = worldPosition.sub(mouse);
+    console.log(this.disparador.vectorAvance);
+    this.disparador.disparo=true;
   }
 
   createBolas(numBolas,splineLongitud){
@@ -74,6 +95,7 @@ class Nivel extends THREE.Object3D{
 
     for (var i = 0; i < numBolas; i++) {
       var bola=this.createBola(this.coloresBolas);
+      bola.position.set(0,-10,0);
       bola.avanzado=-2*i/splineLongitud;
       bolas.vector.push(bola);
       bolas.add(bola);
@@ -93,7 +115,6 @@ class Nivel extends THREE.Object3D{
       new THREE.SphereGeometry(),
       new THREE.MeshPhongMaterial({color: this.coloresBolas[color]})
     );
-    bola.position.set(0,-10,0);
     return bola;
   }
 
@@ -105,6 +126,9 @@ class Nivel extends THREE.Object3D{
       var time = (tiempoActual - this.tiempoAnterior)/1000; // En segundos
       var avance = (time % this.tiempoFinRecorrido)/this.tiempoFinRecorrido; // [0,1]
 
+      /*
+        Avance bolas por recorrido
+      */
       this.bolas.vector.forEach((bola, i) => {
         bola.avanzado+=avance;
 
@@ -120,6 +144,13 @@ class Nivel extends THREE.Object3D{
         }
 
       });
+
+      /*
+        Disparo
+      */
+      if (this.disparador.disparo) {
+        this.disparador.bola.translateOnAxis(this.disparador.vectorAvance,this.velocidad*time);
+      }
 
       this.tiempoAnterior = tiempoActual;
     }

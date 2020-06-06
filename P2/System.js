@@ -32,7 +32,10 @@ class System extends THREE.Scene{
 
     this.indiceNivel = 0;
 
-    this.actualizarNivel();
+    this.actualizarNivel(); // Define y actualiza el valor de this.nivelActual
+
+    var that = this;
+    window.addEventListener("click", (event) => that.nivelActual.disparar(event));
 
   }
 
@@ -127,7 +130,7 @@ class System extends THREE.Scene{
     //   Los planos de recorte cercano y lejano
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     // También se indica dónde se coloca
-    this.camera.position.set (0, 60, 1);// P2: Queremos verlo desde arriba.
+    this.camera.position.set (0, 60, 0);// P2: Queremos verlo desde arriba.
     // Y hacia dónde mira
     var look = new THREE.Vector3 (0,0,0);
     this.camera.lookAt(look);
@@ -219,41 +222,6 @@ class contVarNiveles {
       this.spline=spline;
     }
   }
-
-
-
-
-/// La función   main
-/*$(function () {
-
- // Se instancia la escena pasándole el  div  que se ha creado en el html para visualizar
- var scene = new System("#WebGL-output");
-
- // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
- window.addEventListener ("resize", () => scene.onWindowResize());
-
- // Que no se nos olvide, la primera visualización.
- scene.update();
-});*/
-
-/*var scene = 0;
-
-function start(scene){
-   scene = new System("#WebGL-output");
-   var startgame = document.getElementById('StartGame');
-   startgame.style.display = "none";
-   document.getElementById('WebGL-output').style.display="block";
-   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
-   window.addEventListener ("resize", () => scene.onWindowResize());
-
-   // Que no se nos olvide, la primera visualización.
-   scene.update();
- }
-
- function restart(scene){
-   //start(scene);
-   scene.reintentar();
- }*/
 
 
  class Juego {
