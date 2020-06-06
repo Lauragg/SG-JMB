@@ -16,6 +16,7 @@
           top: 0;
           opacity: 0.8;
         }
+
     </style>
     <script type="text/javascript" src="../libs/three.js"></script>
     <script type="text/javascript" src="../libs/jquery.js"></script>
@@ -36,13 +37,13 @@
 <div id="EndGame">
   <h2>Fin del Juego.</h2>
 
-  <button type="button" name="button" onclick="scene.reintentar()">Reintentar</button>
+  <button type="button" name="button" onclick="juego.nuevoJuego()">Reintentar</button>
 </div>
 
 <div id="StartGame">
   <h2>¡Bienvenido!</h2>
 
-  <button type="button" name="button" onclick="start(scene)">Jugar</button>
+  <button type="button" name="button" onclick="juego.nuevoJuego()">Jugar</button>
 </div>
 </body>
 </html>

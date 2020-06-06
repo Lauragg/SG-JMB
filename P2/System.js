@@ -230,12 +230,13 @@ class contVarNiveles {
  scene.update();
 });*/
 
- var scene = new System("#WebGL-output");
+/*var scene = 0;
 
- function start(scene){
-   //scene = new System("#WebGL-output");
+function start(scene){
+   scene = new System("#WebGL-output");
    var startgame = document.getElementById('StartGame');
    startgame.style.display = "none";
+   document.getElementById('WebGL-output').style.display="block";
    // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
    window.addEventListener ("resize", () => scene.onWindowResize());
 
@@ -246,5 +247,29 @@ class contVarNiveles {
  function restart(scene){
    //start(scene);
    scene.reintentar();
-   displayEndGame();
+ }*/
+
+
+ class Juego {
+   constructor() {
+
+   }
+
+   nuevoJuego(){
+     if (typeof this.sistema == "undefined") {
+        this.sistema = new System("#WebGL-output");
+        var startgame = document.getElementById('StartGame');
+        startgame.style.display = "none";
+
+        // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
+        window.addEventListener ("resize", () => this.sistema.onWindowResize());
+
+        // Que no se nos olvide, la primera visualización.
+        this.sistema.update();
+     }else {
+       this.sistema.reintentar();
+     }
+   }
  }
+
+  var juego = new Juego();
