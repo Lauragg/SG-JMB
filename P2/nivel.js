@@ -19,7 +19,7 @@ class Nivel extends THREE.Object3D{
       undeferred: false,
       depthMax: Infinity,
       objectsThreshold: 1,
-      overlapPct: 0.5
+      overlapPct: 0.2
     });
 
     // Elementos del nivel
@@ -182,6 +182,12 @@ class Nivel extends THREE.Object3D{
       });
 
       /*
+        Se actualiza nuestro árbol.
+      */
+      this.octree.rebuild();
+      this.octree.update();
+
+      /*
         Disparo
       */
       if (this.disparador.disparo) {
@@ -193,17 +199,11 @@ class Nivel extends THREE.Object3D{
         if(this.octreeObjects != null && typeof this.octreeObjects != "undefined"){
           //console.log(this.octreeObjects);
           this.octreeObjects.forEach((bola, i) => {
-            console.log(bola);
-            //console.log("Position bola i="+ i +" :"+bola.position.x +" "+bola.position.y+" "+bola.position.z);
+            //console.log(bola.object);
+            console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);
           });
         }
       }
-
-      /*
-        Se actualiza nuestro árbol.
-      */
-
-      this.octree.update();
 
       this.tiempoAnterior = tiempoActual;
     }
