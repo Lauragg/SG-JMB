@@ -147,6 +147,9 @@ class Nivel extends THREE.Object3D{
     );
     // Para comprobar si la bola ha sido ya añadida a nuestro árbol indexado o no.
     bola.enOctree=false;
+    // Aunque no es necesario, lo añadimos por comodidad para
+    // evitar hacer comparaciones RGB con variables muy internas.
+    bola.colorHex=this.coloresBolas[color];
     return bola;
   }
 
@@ -199,8 +202,20 @@ class Nivel extends THREE.Object3D{
         if(this.octreeObjects != null && typeof this.octreeObjects != "undefined"){
           //console.log(this.octreeObjects);
           this.octreeObjects.forEach((bola, i) => {
-            //console.log(bola.object);
-            console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);
+            //console.log(bola);
+            //console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);
+            var distX = position.x-bola.object.position.x;
+            var distZ = position.z-bola.object.position.z;
+            if (-1 < distX && distX < 1 && -1 < distZ && distZ < 1 ) {
+              if(bola.object.colorHex == that.disparador.bola.colorHex){
+                
+              }
+              console.log(bola);
+              console.log(distX+" "+distZ);
+              console.log("Position disparo:"+position.x +" "+position.y+" "+position.z);
+              console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);
+              this.animacion=false;
+            }
           });
         }
       }
