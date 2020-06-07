@@ -1,7 +1,6 @@
 class Nivel extends THREE.Object3D{
   constructor(numBolas,coloresBolas,spline,posDisparador,velocidad){
     super();
-
     // Animación bolas y camino a seguir
     this.tiempoAnterior = Date.now();
     this.spline = spline;
@@ -9,6 +8,19 @@ class Nivel extends THREE.Object3D{
     var splineLongitud = this.spline.getLength();
     this.tiempoFinRecorrido = splineLongitud/this.velocidad;
     this.animacion = true;
+
+    /*
+     Utilizamos Octree para realizar las colisiones.
+     Comenzamos construyendo el árbol.
+     Nuestros elementos a considerar, las bolas, las añadimos en la función
+     cuando aparezcan en el espacio. Es decir, cuando bola.avanzado>=0.
+    */
+    this.octree = new THREE.Octree({
+      undeferred: false,
+      depthMax: Infinity,
+      objectsThreshold: 1,
+      overlapPct: 0.5
+    });
 
     // Elementos del nivel
     this.superficie = this.createSuperficie();
@@ -24,6 +36,7 @@ class Nivel extends THREE.Object3D{
     this.add(this.bolas);
     this.add(this.disparador);
     //this.add(this.decoraciones);
+
   }
 
   createSuperficie(){
@@ -99,6 +112,7 @@ class Nivel extends THREE.Object3D{
         this.disparador.rotation.y+=0.01;
       }else if (String.fromCharCode(tecla) == "d") {
         this.disparador.rotation.y-=0.01;
+      // Evento de disparo
       }else if (String.fromCharCode(tecla) == "" || String.fromCharCode(tecla) == " ") {
         this.disparador.disparo = true;
       }
@@ -114,7 +128,7 @@ class Nivel extends THREE.Object3D{
       bola.position.set(0,-10,0);
       bola.avanzado=-2*i/splineLongitud;
       bolas.vector.push(bola);
-      bolas.add(bola);
+      this.add(bola);
     }
 
     return bolas;
@@ -131,6 +145,8 @@ class Nivel extends THREE.Object3D{
       new THREE.SphereGeometry(),
       new THREE.MeshPhongMaterial({color: this.coloresBolas[color]})
     );
+    // Para comprobar si la bola ha sido ya añadida a nuestro árbol indexado o no.
+    bola.enOctree=false;
     return bola;
   }
 
@@ -153,6 +169,10 @@ class Nivel extends THREE.Object3D{
           that.animacion = false;
 
         }else if(bola.avanzado >= 0){
+          if (!bola.enOctree) {
+            that.octree.add(bola, {useFaces:true});
+            bola.enOctree = true;
+          }
           var posicion=that.spline.getPointAt(bola.avanzado);
           bola.position.copy(posicion);
           posicion.add(that.spline.getTangentAt(bola.avanzado));
@@ -166,7 +186,24 @@ class Nivel extends THREE.Object3D{
       */
       if (this.disparador.disparo) {
         this.disparador.bola.translateOnAxis(new THREE.Vector3(1,0,0),this.velocidad*time);
+        var position = new THREE.Vector3();
+        this.disparador.bola.getWorldPosition(position)
+        position=position.sub(new THREE.Vector3(0,1,0));
+        this.octreeObjects = this.octree.search(position, 1, true);
+        if(this.octreeObjects != null && typeof this.octreeObjects != "undefined"){
+          //console.log(this.octreeObjects);
+          this.octreeObjects.forEach((bola, i) => {
+            console.log(bola);
+            //console.log("Position bola i="+ i +" :"+bola.position.x +" "+bola.position.y+" "+bola.position.z);
+          });
+        }
       }
+
+      /*
+        Se actualiza nuestro árbol.
+      */
+
+      this.octree.update();
 
       this.tiempoAnterior = tiempoActual;
     }
