@@ -73,6 +73,7 @@ class Nivel extends THREE.Object3D{
     superficie.add(plano);
     superficie.add(camino);*/
     plano.position.set(0,-0.5,0);
+    plano.geometry.computeBoundingBox();
 
     return plano;
   }
@@ -138,6 +139,86 @@ class Nivel extends THREE.Object3D{
 
   }
 
+  comprobarDisparo(){
+    var position = new THREE.Vector3();
+    this.disparador.bola.getWorldPosition(position)
+    position=position.sub(new THREE.Vector3(0,1,0));
+    this.octreeObjects = this.octree.search(position, 1, true);
+    if(this.octreeObjects != null && typeof this.octreeObjects != "undefined"){
+      //console.log(this.octreeObjects);
+      this.octreeObjects.forEach((bola, i) => {
+        //console.log(bola);
+        //console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);
+        var distX = position.x-bola.object.position.x;
+        var distZ = position.z-bola.object.position.z;
+        if (-1 < distX && distX < 1 && -1 < distZ && distZ < 1 ) {
+          if(bola.object.colorHex == this.disparador.bola.colorHex){
+            var index=this.bolas.vector.indexOf(bola.object);
+            if (index>0 && this.bolas.vector[index-1].colorHex == this.disparador.bola.colorHex) {
+              console.log("Primero");
+              this.borrarBolas(index,this.disparador.bola.colorHex);
+            }else if (index < this.bolas.vector.length -1 && this.bolas.vector[index+1].colorHex == this.disparador.bola.colorHex) {
+              console.log("Segundo");
+              this.borrarBolas(index,this.disparador.bola.colorHex);
+            }
+            //this.animacion=false;
+            this.cargarDisparador();
+          }
+
+          /*console.log(bola);
+          console.log(distX+" "+distZ);
+          console.log("Position disparo:"+position.x +" "+position.y+" "+position.z);
+          console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);*/
+        }
+      });
+    }
+
+    if (!this.superficie.geometry.boundingBox.containsPoint(position)) {
+      this.cargarDisparador();
+    }
+  }
+
+  cargarDisparador(){
+    this.disparador.remove(this.disparador.bola);
+    this.disparador.bola = this.createBola();
+    this.disparador.add(this.disparador.bola);
+    this.disparador.disparo=false;
+  }
+
+  borrarBolas(index,colorHex){
+    var mismoColor = true;
+    var posiciones = [index];
+    var i = index - 1;
+    while (mismoColor && i >= 0) {
+      if(this.bolas.vector[i].colorHex==colorHex){
+        posiciones.unshift(i);
+        i--;
+      }else {
+        mismoColor=false;
+      }
+    }
+
+    i = index + 1;
+    mismoColor = true;
+    while (mismoColor && i < this.bolas.vector.length) {
+      if(this.bolas.vector[i].colorHex==colorHex){
+        posiciones.push(i);
+        i++;
+      }else {
+        mismoColor=false;
+      }
+    }
+
+    posiciones.forEach((item, j) => {
+      this.remove(this.bolas.vector[item]);
+    });
+
+    console.log("Posiciones "+posiciones);//posiciones[0]+" "+posiciones[posiciones.length-1]);
+    console.log("Eliminaciones "+this.bolas.vector.splice(posiciones[0],posiciones[posiciones.length-1]-posiciones[0]+1));
+
+    console.log("Vector tras eliminaciones "+this.bolas.vector.length);
+  }
+
 
   createBola(){
     var color=Math.floor(Math.random()*this.coloresBolas.length); // Número aleatorio entre 0 y length - 1
@@ -195,29 +276,7 @@ class Nivel extends THREE.Object3D{
       */
       if (this.disparador.disparo) {
         this.disparador.bola.translateOnAxis(new THREE.Vector3(1,0,0),this.velocidad*time);
-        var position = new THREE.Vector3();
-        this.disparador.bola.getWorldPosition(position)
-        position=position.sub(new THREE.Vector3(0,1,0));
-        this.octreeObjects = this.octree.search(position, 1, true);
-        if(this.octreeObjects != null && typeof this.octreeObjects != "undefined"){
-          //console.log(this.octreeObjects);
-          this.octreeObjects.forEach((bola, i) => {
-            //console.log(bola);
-            //console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);
-            var distX = position.x-bola.object.position.x;
-            var distZ = position.z-bola.object.position.z;
-            if (-1 < distX && distX < 1 && -1 < distZ && distZ < 1 ) {
-              if(bola.object.colorHex == that.disparador.bola.colorHex){
-                
-              }
-              console.log(bola);
-              console.log(distX+" "+distZ);
-              console.log("Position disparo:"+position.x +" "+position.y+" "+position.z);
-              console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);
-              this.animacion=false;
-            }
-          });
-        }
+        this.comprobarDisparo();
       }
 
       this.tiempoAnterior = tiempoActual;

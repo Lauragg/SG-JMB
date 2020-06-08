@@ -19,7 +19,7 @@ class System extends THREE.Scene{
   constructor(myCanvas) {
     super();
 
-    
+
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
     this.renderer = this.createRenderer(myCanvas);
 
@@ -61,8 +61,8 @@ class System extends THREE.Scene{
       Nivel 1
     */
     var spline = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-60,0,0),
-      new THREE.Vector3(60,0,0)
+      new THREE.Vector3(-25,0,0),
+      new THREE.Vector3(25,0,0)
     ]);
 
     var coloresBolas = [0xff7f50,0x6495ed,0x7fff00,0xff8c00];
