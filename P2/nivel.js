@@ -51,7 +51,7 @@ class Nivel extends THREE.Object3D{
 
     var semicirculo = new THREE.ExtrudeGeometry(
       shape,
-      {bevelEnabled: false, steps: 60, extrudePath: this.spline}
+      {bevelEnabled: false, steps: 90, extrudePath: this.spline}
     );
 
     // Operamos con las geometrías

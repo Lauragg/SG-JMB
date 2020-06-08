@@ -60,15 +60,104 @@ class System extends THREE.Scene{
     /*
       Nivel 1
     */
-    var spline = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-25,0,0),
+    var nivel1 = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-25,0,10),
+      new THREE.Vector3(-15,0,-10),
+      new THREE.Vector3(5,0,10),
+      new THREE.Vector3(25,0,-10)
+    ]);
+
+    var coloresBolas = [0x7fff00,0xff8c00];
+    var posDisparador = new THREE.Vector3(5,1,-10);
+
+    niveles.push(new contVarNiveles(20,coloresBolas,nivel1,posDisparador,5)); //numBolas y velocidad
+
+
+    /*
+      Nivel 2
+    */
+    var nivel2 = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-25,0,-20),
+      new THREE.Vector3(-15,0,10),
+      new THREE.Vector3(10,0,20),
+      new THREE.Vector3(15,0,15),
+      new THREE.Vector3(5,0,-15),
+      new THREE.Vector3(18,0,-18),
       new THREE.Vector3(25,0,0)
     ]);
 
-    var coloresBolas = [0xff7f50,0x6495ed,0x7fff00,0xff8c00];
-    var posDisparador = new THREE.Vector3(0,1,-10);
+    var coloresBolas = [0x6495ed,0x7fff00,0xff8c00];
+    var posDisparador = new THREE.Vector3(-5,1,-5);
 
-    niveles.push(new contVarNiveles(20,coloresBolas,spline,posDisparador,5)); //numBolas y velocidad
+    niveles.push(new contVarNiveles(25,coloresBolas,nivel2,posDisparador,5));
+
+    /*
+      Nivel 3
+    */
+    var nivel3 = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(5,0,-25),
+      new THREE.Vector3(-17,0,-10),
+      new THREE.Vector3(-21,0,20),
+      new THREE.Vector3(-15,0,23),
+      new THREE.Vector3(-5,0,10),
+      new THREE.Vector3(5,0,15),
+      new THREE.Vector3(15,0,10),
+      new THREE.Vector3(25,0,-10)
+    ]);
+
+    var coloresBolas = [0xff7f50,0x6495ed,0x7fff00,0xff8c00];
+    var posDisparador = new THREE.Vector3(5,1,-10);
+
+    niveles.push(new contVarNiveles(30,coloresBolas,nivel3,posDisparador,5));
+
+    /*
+      Nivel 4
+    */
+    var nivel4 = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-20,0,-25),
+      new THREE.Vector3(-15,0,-5),
+      new THREE.Vector3(-21,0,10),
+      new THREE.Vector3(-15,0,15),
+      new THREE.Vector3(-10,0,21),
+      new THREE.Vector3(5,0,15),
+      new THREE.Vector3(10,0,10),
+      new THREE.Vector3(5,0,5),
+      new THREE.Vector3(-5,0,-10),
+      new THREE.Vector3(5,0,-20),
+      new THREE.Vector3(25,0,10)
+    ]);
+
+    var coloresBolas = [0xff7f50,0x6495ed,0x7fff00,0xff8c00];
+    var posDisparador = new THREE.Vector3(-5,1,5);
+
+    niveles.push(new contVarNiveles(35,coloresBolas,nivel4,posDisparador,5));
+
+    /*
+      Nivel 5
+    */
+    var nivel5 = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(25,0,-20),
+      new THREE.Vector3(15,0,-18),
+      new THREE.Vector3(5,0,-22),
+      new THREE.Vector3(-5,0,-10),
+      new THREE.Vector3(5,0,0),
+      new THREE.Vector3(5,0,5),
+      new THREE.Vector3(-10,0,0),
+      new THREE.Vector3(-15,0,3),
+      new THREE.Vector3(-18,0,8),
+      new THREE.Vector3(-15,0,17),
+      new THREE.Vector3(-5,0,12),
+      new THREE.Vector3(15,0,15),
+      new THREE.Vector3(21,0,0),
+      new THREE.Vector3(12,0,-5),
+      new THREE.Vector3(10,0,-10),
+      new THREE.Vector3(25,0,-15)
+    ]);
+
+    var coloresBolas = [0xff7f50,0x6495ed,0x7fff00,0xff8c00,0xfffacd];
+    var posDisparador = new THREE.Vector3(5,1,-10);
+
+    niveles.push(new contVarNiveles(40,coloresBolas,nivel5,posDisparador,5));
 
     return niveles;
   }
