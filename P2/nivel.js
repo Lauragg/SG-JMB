@@ -262,9 +262,10 @@ class Nivel extends THREE.Object3D{
     var diferencia=this.posiciones[this.posiciones.length-1]-this.posiciones[0]+1;
     console.log("Eliminaciones "+this.bolas.vector.splice(this.posiciones[0],diferencia));
     this.retrocediendo=true;
-    this.retrocedo=2*diferencia/this.splineLongitud;
+    this.retrocedo=2*(diferencia)/this.splineLongitud;
 
     console.log("Retrocedo:  "+this.retrocedo);
+    console.log("");
   }
 
 
@@ -294,7 +295,7 @@ class Nivel extends THREE.Object3D{
         Avance bolas por recorrido
       */
       this.bolas.vector.forEach((bola, i) => {
-        if (this.retrocediendo) {
+        if (this.retrocediendo && this.posiciones[0] != 0) {
           console.log("Retrocediendo");
           if (i < this.posiciones[0]) {
             if (this.retrocedo<=avance) {
@@ -303,7 +304,9 @@ class Nivel extends THREE.Object3D{
               console.log("Me falta: "+this.retrocedo);
             }else{
               bola.avanzado-=avance;
-              this.retrocedo-=avance;
+              if (i==0) {
+                this.retrocedo-=avance;
+              }
             }
           }
         }else {
