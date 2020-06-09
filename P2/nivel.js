@@ -7,7 +7,7 @@ class Nivel extends THREE.Object3D{
     this.velocidad = velocidad; // unidades/s
     var splineLongitud = this.spline.getLength();
     this.tiempoFinRecorrido = splineLongitud/this.velocidad;
-    this.animacion = true;
+    this.animacion = false;
 
     /*
      Utilizamos Octree para realizar las colisiones.
