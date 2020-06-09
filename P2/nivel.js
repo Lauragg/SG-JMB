@@ -35,7 +35,13 @@ class Nivel extends THREE.Object3D{
     this.add(this.superficie);
     this.add(this.bolas);
     this.add(this.disparador);
+
+    /*var geometryLine= new THREE.Geometry();
+    geometryLine.vertices = this.spline.getPoints(100);
+    var visibleSpline= new THREE.Line(geometryLine,new THREE.LineBasicMaterial({color:0xff0000}));*/
     //this.add(this.decoraciones);
+
+    //this.add(visibleSpline);
 
   }
 
@@ -44,10 +50,12 @@ class Nivel extends THREE.Object3D{
     var cuadrado = new THREE.BoxGeometry(50,1,50);
     //var circulo = new THREE.CircleGeometry(); Demasiado bonito como para ser cierto
     var shape= new THREE.Shape();
-    shape.moveTo(-1,0.5);
-    shape.quadraticCurveTo(-1,-0.5,0,-0.5);
-    shape.quadraticCurveTo(1,-0.5,1,0.5);
-    shape.lineTo(-1,0.5);
+    shape.moveTo(-1,1);
+    shape.quadraticCurveTo(-1,-1,0,-1);
+    shape.quadraticCurveTo(1,-1,1,1);
+    shape.quadraticCurveTo(1,1,0,1);
+    shape.quadraticCurveTo(-1,1,-1,1);
+    //shape.lineTo(-1,0.5);
 
     var semicirculo = new THREE.ExtrudeGeometry(
       shape,
@@ -55,6 +63,7 @@ class Nivel extends THREE.Object3D{
     );
 
     // Operamos con las geometrías
+    cuadrado.translate(0,-0.5,0);
     var base=new ThreeBSP(cuadrado)
       .subtract(new ThreeBSP(semicirculo))
       .toGeometry();
@@ -65,14 +74,14 @@ class Nivel extends THREE.Object3D{
       new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load('../imgs/wood.jpg') } )
     );
 
-    /*var camino = new THREE.Mesh(semicirculo, new THREE.MeshPhongMaterial({color: 0xf08080}));
+    var camino = new THREE.Mesh(semicirculo, new THREE.MeshPhongMaterial({color: 0xf08080}));
 
-    var superficie = new THREE.Object3D();
-    superficie.position.set(0,-0.5,0);
+    //var superficie = new THREE.Object3D();
+    //superficie.position.set(0,-0.5,0);
 
-    superficie.add(plano);
-    superficie.add(camino);*/
-    plano.position.set(0,-0.5,0);
+    //superficie.add(plano);
+    //this.add(camino);
+    //plano.position.set(0,-0.5,0);
     plano.geometry.computeBoundingBox();
 
     return plano;
@@ -285,8 +294,8 @@ class Nivel extends THREE.Object3D{
           }
           var posicion=that.spline.getPointAt(bola.avanzado);
           bola.position.copy(posicion);
-          posicion.add(that.spline.getTangentAt(bola.avanzado));
-          bola.lookAt(posicion);
+          //posicion.add(that.spline.getTangentAt(bola.avanzado));
+          //bola.lookAt(posicion);
         }
 
       });
