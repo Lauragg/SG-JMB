@@ -57,6 +57,15 @@ class System extends THREE.Scene{
         LemonChiffon -> 0xfffacd
     */
 
+    /*var prueba = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-25,0,0),
+      new THREE.Vector3(25,0,0)
+    ]);
+
+    var coloresBolas = [0xff7f50,0x6495ed,0x7fff00,0xff8c00];
+    var posDisparador = new THREE.Vector3(0,1,-10);
+    niveles.push(new contVarNiveles(20,coloresBolas,prueba,posDisparador,5)); //numBolas y velocidad
+
     /*
       Nivel 1
     */
