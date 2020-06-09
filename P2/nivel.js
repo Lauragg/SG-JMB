@@ -80,14 +80,39 @@ class Nivel extends THREE.Object3D{
 
   createDisparador(posDisparador){
     var disparador = new THREE.Object3D();
-    disparador.bola = this.createBola();
+    /*disparador.bola = this.createBola();
     disparador.apuntador = new THREE.Mesh(new THREE.BoxGeometry(2,1,1), new THREE.MeshPhongMaterial({color: 0xf08080}));
     disparador.apuntador.position.set(1,0,0);
     disparador.disparo = false;
     disparador.position.set(posDisparador.x,posDisparador.y,posDisparador.z);
 
     disparador.add(disparador.bola);
-    disparador.add(disparador.apuntador);
+    disparador.add(disparador.apuntador);*/
+
+    var materialLoader = new THREE.MTLLoader();
+    var objectLoader = new THREE.OBJLoader();
+    materialLoader.load('../models/cañon/Blank.mtl',
+      function(materials) {
+        objectLoader.setMaterials(materials);
+        objectLoader.load('../models/cañon/17957_Hand_cannon_v1.obj',
+          function(object) {
+            disparador.cannon = object;
+            disparador.cannon.position.set(0,1,0);
+            disparador.cannon.scale.set(0.35, 0.35, 0.35);
+            disparador.cannon.rotation.x = Math.PI/2;
+            disparador.add(disparador.cannon);
+          }, null, null);
+      }
+    ); 
+
+    disparador.bola = this.createBola();
+    disparador.disparo = false;
+
+    disparador.position.set(posDisparador.x,posDisparador.y,posDisparador.z);
+
+    disparador.bola.position.set(0,0,5);
+
+    disparador.add(disparador.bola);
 
     return disparador;
   }
@@ -110,9 +135,9 @@ class Nivel extends THREE.Object3D{
     var tecla = event.which || event.keyCode;
     if(!this.disparador.disparo){ // Para que no se mueva la bola cuando aún se está disparando
       if (String.fromCharCode(tecla) == "a") {
-        this.disparador.rotation.y+=0.01;
+        this.disparador.rotation.y+=0.02;
       }else if (String.fromCharCode(tecla) == "d") {
-        this.disparador.rotation.y-=0.01;
+        this.disparador.rotation.y-=0.02;
       // Evento de disparo
       }else if (String.fromCharCode(tecla) == "" || String.fromCharCode(tecla) == " ") {
         this.disparador.disparo = true;
@@ -181,6 +206,7 @@ class Nivel extends THREE.Object3D{
   cargarDisparador(){
     this.disparador.remove(this.disparador.bola);
     this.disparador.bola = this.createBola();
+    disparador.bola.position.set(0,0,5);
     this.disparador.add(this.disparador.bola);
     this.disparador.disparo=false;
   }
@@ -275,7 +301,7 @@ class Nivel extends THREE.Object3D{
         Disparo
       */
       if (this.disparador.disparo) {
-        this.disparador.bola.translateOnAxis(new THREE.Vector3(1,0,0),this.velocidad*time);
+        this.disparador.bola.translateOnAxis(new THREE.Vector3(0,0,1),this.velocidad*time);
         this.comprobarDisparo();
       }
 
