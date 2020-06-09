@@ -295,6 +295,13 @@ class System extends THREE.Scene{
       this.remove(this.nivelActual);
     }
 
+    /*var that=this;
+
+    var onAfter =function(renderer,scene,camera,geometry,material,group) {
+      console.log("Entro");
+      that.nivelActual.iniciarAnimacion();
+    };*/
+
     this.nivelActual = new Nivel(
       this.niveles[this.indiceNivel].numBolas,
       this.niveles[this.indiceNivel].coloresBolas,
@@ -302,8 +309,10 @@ class System extends THREE.Scene{
       this.niveles[this.indiceNivel].posDisparador,
       this.niveles[this.indiceNivel].velocidad
     );
+
     this.indiceNivel++;
     this.add(this.nivelActual);
+    //this.nivelActual.onAfterRender=onAfter;
   }
 
   reintentar(){

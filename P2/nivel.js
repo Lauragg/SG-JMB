@@ -2,12 +2,11 @@ class Nivel extends THREE.Object3D{
   constructor(numBolas,coloresBolas,spline,posDisparador,velocidad){
     super();
     // Animación bolas y camino a seguir
-    this.tiempoAnterior = Date.now();
     this.spline = spline;
     this.velocidad = velocidad; // unidades/s
-    var splineLongitud = this.spline.getLength();
-    this.tiempoFinRecorrido = splineLongitud/this.velocidad;
-    this.animacion = false;
+    this.splineLongitud = this.spline.getLength();//Para evitar hacer el cálculo todo el rato.
+    this.tiempoFinRecorrido = this.splineLongitud/this.velocidad;
+    this.animacion = true;//false;
 
     /*
      Utilizamos Octree para realizar las colisiones.
@@ -26,7 +25,7 @@ class Nivel extends THREE.Object3D{
     this.superficie = this.createSuperficie();
 
     this.coloresBolas=coloresBolas;
-    this.bolas = this.createBolas(numBolas,splineLongitud);
+    this.bolas = this.createBolas(numBolas);
 
     this.disparador = this.createDisparador(posDisparador);
 
@@ -42,6 +41,9 @@ class Nivel extends THREE.Object3D{
     //this.add(this.decoraciones);
 
     //this.add(visibleSpline);
+
+    //
+    this.tiempoAnterior = Date.now();
 
   }
 
@@ -112,7 +114,7 @@ class Nivel extends THREE.Object3D{
             disparador.add(disparador.cannon);
           }, null, null);
       }
-    ); 
+    );
 
     disparador.bola = this.createBola();
     disparador.disparo = false;
@@ -125,6 +127,10 @@ class Nivel extends THREE.Object3D{
 
     return disparador;
   }
+
+/*  iniciarAnimacion(){
+    this.animacion=true;
+  }*/
 
   /*disparar(event){
     var mouse = new THREE.Vector3(
@@ -149,19 +155,23 @@ class Nivel extends THREE.Object3D{
         this.disparador.rotation.y-=0.02;
       // Evento de disparo
       }else if (String.fromCharCode(tecla) == "" || String.fromCharCode(tecla) == " ") {
-        this.disparador.disparo = true;
+        //if (this.animacion) {
+          this.disparador.disparo = true;
+        //}else {
+          //this.animacion=true;
+        //}
       }
     }
   }
 
-  createBolas(numBolas,splineLongitud){
+  createBolas(numBolas){
     var bolas = new THREE.Object3D();
     bolas.vector = new Array();
 
     for (var i = 0; i < numBolas; i++) {
       var bola=this.createBola(this.coloresBolas);
       bola.position.set(0,-10,0);
-      bola.avanzado=-2*i/splineLongitud;
+      bola.avanzado=-2*i/this.splineLongitud;
       bolas.vector.push(bola);
       this.add(bola);
     }
@@ -215,18 +225,18 @@ class Nivel extends THREE.Object3D{
   cargarDisparador(){
     this.disparador.remove(this.disparador.bola);
     this.disparador.bola = this.createBola();
-    disparador.bola.position.set(0,0,5);
+    this.disparador.bola.position.set(0,0,5);
     this.disparador.add(this.disparador.bola);
     this.disparador.disparo=false;
   }
 
   borrarBolas(index,colorHex){
     var mismoColor = true;
-    var posiciones = [index];
+    this.posiciones = [index];
     var i = index - 1;
     while (mismoColor && i >= 0) {
       if(this.bolas.vector[i].colorHex==colorHex){
-        posiciones.unshift(i);
+        this.posiciones.unshift(i);
         i--;
       }else {
         mismoColor=false;
@@ -237,21 +247,24 @@ class Nivel extends THREE.Object3D{
     mismoColor = true;
     while (mismoColor && i < this.bolas.vector.length) {
       if(this.bolas.vector[i].colorHex==colorHex){
-        posiciones.push(i);
+        this.posiciones.push(i);
         i++;
       }else {
         mismoColor=false;
       }
     }
 
-    posiciones.forEach((item, j) => {
+    this.posiciones.forEach((item, j) => {
       this.remove(this.bolas.vector[item]);
     });
 
-    console.log("Posiciones "+posiciones);//posiciones[0]+" "+posiciones[posiciones.length-1]);
-    console.log("Eliminaciones "+this.bolas.vector.splice(posiciones[0],posiciones[posiciones.length-1]-posiciones[0]+1));
+    console.log("Posiciones "+this.posiciones);//posiciones[0]+" "+posiciones[posiciones.length-1]);
+    var diferencia=this.posiciones[this.posiciones.length-1]-this.posiciones[0]+1;
+    console.log("Eliminaciones "+this.bolas.vector.splice(this.posiciones[0],diferencia));
+    this.retrocediendo=true;
+    this.retrocedo=2*diferencia/this.splineLongitud;
 
-    console.log("Vector tras eliminaciones "+this.bolas.vector.length);
+    console.log("Retrocedo:  "+this.retrocedo);
   }
 
 
@@ -281,7 +294,21 @@ class Nivel extends THREE.Object3D{
         Avance bolas por recorrido
       */
       this.bolas.vector.forEach((bola, i) => {
-        bola.avanzado+=avance;
+        if (this.retrocediendo) {
+          console.log("Retrocediendo");
+          if (i < this.posiciones[0]) {
+            if (this.retrocedo<=avance) {
+              bola.avanzado-=this.retrocedo;
+              this.retrocediendo=false;
+              console.log("Me falta: "+this.retrocedo);
+            }else{
+              bola.avanzado-=avance;
+              this.retrocedo-=avance;
+            }
+          }
+        }else {
+          bola.avanzado+=avance;
+        }
 
         if (bola.avanzado >= 1) {
           displayEndGame();
