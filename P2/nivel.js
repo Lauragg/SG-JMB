@@ -196,7 +196,10 @@ class Nivel extends THREE.Object3D{
         var distX = position.x-bola.object.position.x;
         var distZ = position.z-bola.object.position.z;
         if (-1 < distX && distX < 1 && -1 < distZ && distZ < 1 ) {
-          if(bola.object.colorHex == this.disparador.bola.colorHex){
+          this.disparador.disparo=false;
+          var index=this.bolas.vector.indexOf(bola.object);
+          this.insertarBolas(index);
+          /*if(bola.object.colorHex == this.disparador.bola.colorHex){
             var index=this.bolas.vector.indexOf(bola.object);
             if (index>0 && this.bolas.vector[index-1].colorHex == this.disparador.bola.colorHex) {
               console.log("Primero");
@@ -215,7 +218,7 @@ class Nivel extends THREE.Object3D{
             this.disparador.disparo=false;
             this.insertarBolas(index);
           }
-          console.log("HOli");
+          console.log("HOli");*/
           //this.cargarDisparador();
 
           /*console.log(bola);
@@ -227,6 +230,18 @@ class Nivel extends THREE.Object3D{
     }
 
     if (!this.superficie.geometry.boundingBox.containsPoint(position)) {
+      this.cargarDisparador();
+    }
+  }
+
+  comprobarBolas(index){
+    if (index>0 && this.bolas.vector[index-1].colorHex == this.bolas.vector[index].colorHex) {
+      console.log("Primero");
+      this.borrarBolas(index,this.bolas.vector[index].colorHex);
+      this.cargarDisparador();
+    }else if (index < this.bolas.vector.length -1 && this.bolas.vector[index+1].colorHex == this.bolas.vector[index].colorHex) {
+      console.log("Segundo");
+      this.borrarBolas(index,this.bolas.vector[index].colorHex);
       this.cargarDisparador();
     }
   }
@@ -273,6 +288,10 @@ class Nivel extends THREE.Object3D{
     console.log("Eliminaciones "+this.bolas.vector.splice(this.posiciones[0],diferencia));
     this.retrocediendo=true;
     this.retrocedo=2*(diferencia)/this.splineLongitud;
+
+    if (this.bolas.vector.length == 0 || this.bolas.vector==null) {
+      juego.siguienteNivel();
+    }
 
     //console.log("Retrocedo:  "+this.retrocedo);
     //console.log("");
@@ -335,14 +354,17 @@ class Nivel extends THREE.Object3D{
             this.add(copiaBola);
             copiaBola.avanzado=this.bolas.vector[this.indexInsertando].avanzado - 2/this.splineLongitud;
             copiaBola.enOctree = false;
+            copiaBola.colorHex = this.disparador.bola.colorHex;
             this.cargarDisparador();
             this.insertando=false;
+            //console.log("Antes de comprobar Bolas");
+            this.comprobarBolas(this.indexInsertando+1);
             //console.log("Insertando: "+this.retrocedo);
           }else{
             bola.avanzado-=avance;
             if (i==(this.bolas.vector.length - 1)) {
-              console.log(2/this.splineLongitud);
-              console.log("Insertando: "+this.retrocedo);
+              //console.log(2/this.splineLongitud);
+              //console.log("Insertando: "+this.retrocedo);
               this.retrocedo-=avance;
             }
           }

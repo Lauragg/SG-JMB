@@ -301,18 +301,22 @@ class System extends THREE.Scene{
       console.log("Entro");
       that.nivelActual.iniciarAnimacion();
     };*/
+    if (this.indiceNivel < this.niveles.length) {
+      this.nivelActual = new Nivel(
+        this.niveles[this.indiceNivel].numBolas,
+        this.niveles[this.indiceNivel].coloresBolas,
+        this.niveles[this.indiceNivel].spline,
+        this.niveles[this.indiceNivel].posDisparador,
+        this.niveles[this.indiceNivel].velocidad
+      );
 
-    this.nivelActual = new Nivel(
-      this.niveles[this.indiceNivel].numBolas,
-      this.niveles[this.indiceNivel].coloresBolas,
-      this.niveles[this.indiceNivel].spline,
-      this.niveles[this.indiceNivel].posDisparador,
-      this.niveles[this.indiceNivel].velocidad
-    );
+      this.indiceNivel++;
+      this.add(this.nivelActual);
+      //this.nivelActual.onAfterRender=onAfter;
+    }else {
+      displayEndGame();
+    }
 
-    this.indiceNivel++;
-    this.add(this.nivelActual);
-    //this.nivelActual.onAfterRender=onAfter;
   }
 
   reintentar(){
@@ -356,6 +360,10 @@ class contVarNiveles {
      }else {
        this.sistema.reintentar();
      }
+   }
+
+   siguienteNivel(){
+     this.sistema.actualizarNivel();
    }
  }
 
