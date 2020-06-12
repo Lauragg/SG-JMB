@@ -26,9 +26,17 @@ Dicho esto, mostramos las clases y objetos en concreto que hemos utilizado para 
 
 Nótese **Juego**, **System**, **Nivel** y **contVarNiveles** son clases que han sido creadas de forma explícita en nuestro código mientras que **disparador** y **bola** son **THREE.Object3D** a los que simplemente les hemos añadido unas variables extras, algo permitido por el lenguaje en concreto que estamos utilizando.
 
+También, debemos de indicar que "HexColor" no es más que un String. Hemos decidido ponerlo con este nombre en el diagrama de clases únicamente para indicar que no nos vale un String cualquiera sino que este debe de representar un color en código hexadecimal que pueda ser leído por javascript.
+
 ## Evento disparar
 Los distintos eventos y estados por los que se mueve nuestra aplicación no suelen disponer de mayor dificultad y se pueden seguir con facilidad siguiendo una lectura del código. Por ejemplo, no es complicado ver que una vez iniciado el juego al pulsar el botón correspondiente nuestro **Juego** notifica a **System** para cree la escena y arranque el **Nivel** que queremos jugar.
 
 Sin embargo, esto no es tan sencillo seguir las mecánicas y los razonamientos seguidos una vez que hemos disparado la bola hasta que podamos volver a disparar la siguiente. Para poder explicarlo de forma resumida y visual, adjuntamos el siguiente diagrama de estados producido por dicho evento:
 
 ![](./imgs/diagramaEstado.png)
+
+## Posibles mejoras en un futuro:
+- Creación de nuevos niveles
+- Coordinar las dificultades de nuestros niveles para que no sean excesivamente complicados.
+- Solucionar los bugs que puedan encontrarse a largo plazo.
+- Creación de elementos decorativos. Esto ha sido dejado como algo extra puesto que se trata de algo ya evaluado en la práctica  y hemos decidido centrarnos en las nuevas herramientas aprendidas.
