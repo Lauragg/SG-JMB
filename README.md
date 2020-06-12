@@ -8,7 +8,7 @@
 
 En esta práctica hemos tratado de replicar un juego web que funcionara de forma similar al conocido juego para móvil *Jungle Marble Blast*. Juego por niveles en que nuestro objetivo será destruir todas las bolas que recorren un determinado camino antes de que estas lleguen al final.
 
-![](./imgs/jmb.png)
+![](./imgs/jmb.jpg)
 
 Para ello, nos valdremos de la biblioteca *THREE.js* y de *Octree.js*, proporcionadas para el desarrollo de la asignatura.
 
