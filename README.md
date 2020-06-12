@@ -40,3 +40,5 @@ Sin embargo, esto no es tan sencillo seguir las mecánicas y los razonamientos s
 - Coordinar las dificultades de nuestros niveles para que no sean excesivamente complicados.
 - Solucionar los bugs que puedan encontrarse a largo plazo.
 - Creación de elementos decorativos. Esto ha sido dejado como algo extra puesto que se trata de algo ya evaluado en la práctica  y hemos decidido centrarnos en las nuevas herramientas aprendidas.
+- Añadir textos informando de que hemos superado el nivel.
+- Añadir textos informando de que estamos cargando el nivel.
