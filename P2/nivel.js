@@ -168,13 +168,13 @@ class Nivel extends THREE.Object3D{
 
   createBolas(numBolas){
     var bolas = new THREE.Object3D();
-    bolas.vector = new Array();
+    bolas = new Array();
 
     for (var i = 0; i < numBolas; i++) {
       var bola=this.createBola(this.coloresBolas);
       bola.position.set(0,-10,0);
       bola.avanzado=-2*i/this.splineLongitud;
-      bolas.vector.push(bola);
+      bolas.push(bola);
       this.add(bola);
     }
 
@@ -199,15 +199,15 @@ class Nivel extends THREE.Object3D{
         var distZ = position.z-bola.object.position.z;
         if (-1 < distX && distX < 1 && -1 < distZ && distZ < 1 ) {
           this.disparador.disparo=false;
-          var index=this.bolas.vector.indexOf(bola.object);
+          var index=this.bolas.indexOf(bola.object);
           this.insertarBolas(index);
           /*if(bola.object.colorHex == this.disparador.bola.colorHex){
-            var index=this.bolas.vector.indexOf(bola.object);
-            if (index>0 && this.bolas.vector[index-1].colorHex == this.disparador.bola.colorHex) {
+            var index=this.bolas.indexOf(bola.object);
+            if (index>0 && this.bolas[index-1].colorHex == this.disparador.bola.colorHex) {
               console.log("Primero");
               this.borrarBolas(index,this.disparador.bola.colorHex);
               this.cargarDisparador();
-            }else if (index < this.bolas.vector.length -1 && this.bolas.vector[index+1].colorHex == this.disparador.bola.colorHex) {
+            }else if (index < this.bolas.length -1 && this.bolas[index+1].colorHex == this.disparador.bola.colorHex) {
               console.log("Segundo");
               this.borrarBolas(index,this.disparador.bola.colorHex);
               this.cargarDisparador();
@@ -216,7 +216,7 @@ class Nivel extends THREE.Object3D{
               this.disparador.disparo=false;
             }
           }else {
-            var index=this.bolas.vector.indexOf(bola.object);
+            var index=this.bolas.indexOf(bola.object);
             this.disparador.disparo=false;
             this.insertarBolas(index);
           }
@@ -239,7 +239,7 @@ class Nivel extends THREE.Object3D{
   comprobarBolas(index){
     var numMismoColor = 1; // La bola que disparamos tiene el mismo color que ella misma.
     // Primero nos aseguramos de que este dentro de los límites
-    if (index >= 0 && index < this.bolas.vector.length) {
+    if (index >= 0 && index < this.bolas.length) {
       /*
         A continuación comprobamos el número de bolas del mismo color.
         Casos:
@@ -247,18 +247,18 @@ class Nivel extends THREE.Object3D{
          - La de delante y la de atrás son del mismo color.
          - Las dos de atrás son del mismo color.
       */
-      if (index>0 && this.bolas.vector[index-1].colorHex == this.bolas.vector[index].colorHex) {
+      if (index>0 && this.bolas[index-1].colorHex == this.bolas[index].colorHex) {
         console.log("La de delante");
         numMismoColor++;
-        if (index > 1 && this.bolas.vector[index-2].colorHex == this.bolas.vector[index].colorHex) {
+        if (index > 1 && this.bolas[index-2].colorHex == this.bolas[index].colorHex) {
           console.log("Las dos de delante");
           numMismoColor++;
         }
       }
-      if (index < this.bolas.vector.length -1 && this.bolas.vector[index+1].colorHex == this.bolas.vector[index].colorHex) {
+      if (index < this.bolas.length -1 && this.bolas[index+1].colorHex == this.bolas[index].colorHex) {
         console.log("La de atrás");
         numMismoColor++;
-        if (index < this.bolas.vector.length -2 && this.bolas.vector[index+2].colorHex == this.bolas.vector[index].colorHex) {
+        if (index < this.bolas.length -2 && this.bolas[index+2].colorHex == this.bolas[index].colorHex) {
           console.log("Las dos de atrás");
           numMismoColor++;
         }
@@ -266,7 +266,7 @@ class Nivel extends THREE.Object3D{
     }
 
     if (numMismoColor>=3) {
-      this.borrarBolas(index,this.bolas.vector[index].colorHex);
+      this.borrarBolas(index,this.bolas[index].colorHex);
     }else {
       this.cargarDisparador();
     }
@@ -285,7 +285,7 @@ class Nivel extends THREE.Object3D{
     this.posiciones = [index];
     var i = index - 1;
     while (mismoColor && i >= 0) {
-      if(this.bolas.vector[i].colorHex==colorHex){
+      if(this.bolas[i].colorHex==colorHex){
         this.posiciones.unshift(i);
         i--;
       }else {
@@ -295,8 +295,8 @@ class Nivel extends THREE.Object3D{
 
     i = index + 1;
     mismoColor = true;
-    while (mismoColor && i < this.bolas.vector.length) {
-      if(this.bolas.vector[i].colorHex==colorHex){
+    while (mismoColor && i < this.bolas.length) {
+      if(this.bolas[i].colorHex==colorHex){
         this.posiciones.push(i);
         i++;
       }else {
@@ -305,17 +305,17 @@ class Nivel extends THREE.Object3D{
     }
 
     this.posiciones.forEach((item, j) => {
-      this.remove(this.bolas.vector[item]);
-      this.octree.remove(this.bolas.vector[item]);
+      this.remove(this.bolas[item]);
+      this.octree.remove(this.bolas[item]);
     });
 
     //console.log("Posiciones "+this.posiciones);//posiciones[0]+" "+posiciones[posiciones.length-1]);
     var diferencia=this.posiciones[this.posiciones.length-1]-this.posiciones[0]+1;
-    console.log("Eliminaciones "+this.bolas.vector.splice(this.posiciones[0],diferencia));
+    console.log("Eliminaciones "+this.bolas.splice(this.posiciones[0],diferencia));
     this.retrocediendo=true;
     this.retrocedo=2*(diferencia)/this.splineLongitud;
 
-    if (this.bolas.vector.length == 0 || this.bolas.vector==null) {
+    if (this.bolas.length == 0 || this.bolas==null) {
       siguienteNivel(juego);
     }
 
@@ -324,7 +324,7 @@ class Nivel extends THREE.Object3D{
   }
 
   insertarBolas(index){
-    if (index < this.bolas.vector.length - 1) {
+    if (index < this.bolas.length - 1) {
       this.insertando=true;
     }
     this.indexInsertando = index;
@@ -357,7 +357,7 @@ class Nivel extends THREE.Object3D{
       /*
         Avance bolas por recorrido
       */
-      this.bolas.vector.forEach((bola, i) => {
+      this.bolas.forEach((bola, i) => {
         if (this.retrocediendo) {
           if (this.posiciones[0] != 0) {
             if (i < this.posiciones[0]) {
@@ -382,9 +382,9 @@ class Nivel extends THREE.Object3D{
             bola.avanzado-=this.retrocedo;
             var copiaBola = this.disparador.bola.clone();//new THREE.Object3D();
             //this.disparador.bola.copy(copiaBola);
-            this.bolas.vector.splice(this.indexInsertando+1,0,copiaBola);
+            this.bolas.splice(this.indexInsertando+1,0,copiaBola);
             this.add(copiaBola);
-            copiaBola.avanzado=this.bolas.vector[this.indexInsertando].avanzado - 2/this.splineLongitud;
+            copiaBola.avanzado=this.bolas[this.indexInsertando].avanzado - 2/this.splineLongitud;
             copiaBola.enOctree = false;
             copiaBola.colorHex = this.disparador.bola.colorHex;
             this.cargarDisparador();
@@ -394,7 +394,7 @@ class Nivel extends THREE.Object3D{
             //console.log("Insertando: "+this.retrocedo);
           }else{
             bola.avanzado-=avance;
-            if (i==(this.bolas.vector.length - 1)) {
+            if (i==(this.bolas.length - 1)) {
               //console.log(2/this.splineLongitud);
               //console.log("Insertando: "+this.retrocedo);
               this.retrocedo-=avance;
