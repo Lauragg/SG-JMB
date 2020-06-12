@@ -155,9 +155,9 @@ class Nivel extends THREE.Object3D{
         this.disparador.rotation.y-=0.02;
       // Evento de disparo
       }else if (String.fromCharCode(tecla) == "" || String.fromCharCode(tecla) == " ") {
-        //if (this.animacion) {
+        if (!this.insertando && !this.retrocediendo) {
           this.disparador.disparo = true;
-        //}else {
+        }//else {
           //this.animacion=true;
         //}
       }
