@@ -201,13 +201,22 @@ class Nivel extends THREE.Object3D{
             if (index>0 && this.bolas.vector[index-1].colorHex == this.disparador.bola.colorHex) {
               console.log("Primero");
               this.borrarBolas(index,this.disparador.bola.colorHex);
+              this.cargarDisparador();
             }else if (index < this.bolas.vector.length -1 && this.bolas.vector[index+1].colorHex == this.disparador.bola.colorHex) {
               console.log("Segundo");
               this.borrarBolas(index,this.disparador.bola.colorHex);
+              this.cargarDisparador();
+            }else {
+              this.insertarBolas(index);
+              this.disparador.disparo=false;
             }
-            //this.animacion=false;
-            this.cargarDisparador();
+          }else {
+            var index=this.bolas.vector.indexOf(bola.object);
+            this.disparador.disparo=false;
+            this.insertarBolas(index);
           }
+          console.log("HOli");
+          //this.cargarDisparador();
 
           /*console.log(bola);
           console.log(distX+" "+distZ);
@@ -256,16 +265,25 @@ class Nivel extends THREE.Object3D{
 
     this.posiciones.forEach((item, j) => {
       this.remove(this.bolas.vector[item]);
+      this.octree.remove(this.bolas.vector[item]);
     });
 
-    console.log("Posiciones "+this.posiciones);//posiciones[0]+" "+posiciones[posiciones.length-1]);
+    //console.log("Posiciones "+this.posiciones);//posiciones[0]+" "+posiciones[posiciones.length-1]);
     var diferencia=this.posiciones[this.posiciones.length-1]-this.posiciones[0]+1;
     console.log("Eliminaciones "+this.bolas.vector.splice(this.posiciones[0],diferencia));
     this.retrocediendo=true;
     this.retrocedo=2*(diferencia)/this.splineLongitud;
 
-    console.log("Retrocedo:  "+this.retrocedo);
-    console.log("");
+    //console.log("Retrocedo:  "+this.retrocedo);
+    //console.log("");
+  }
+
+  insertarBolas(index){
+    if (index < this.bolas.vector.length - 1) {
+      this.insertando=true;
+    }
+    this.indexInsertando = index;
+    this.retrocedo = 1/this.splineLongitud;
   }
 
 
@@ -296,12 +314,11 @@ class Nivel extends THREE.Object3D{
       */
       this.bolas.vector.forEach((bola, i) => {
         if (this.retrocediendo && this.posiciones[0] != 0) {
-          console.log("Retrocediendo");
           if (i < this.posiciones[0]) {
             if (this.retrocedo<=avance) {
               bola.avanzado-=this.retrocedo;
               this.retrocediendo=false;
-              console.log("Me falta: "+this.retrocedo);
+              console.log("Retrocediendo: "+this.retrocedo);
             }else{
               bola.avanzado-=avance;
               if (i==0) {
@@ -309,7 +326,27 @@ class Nivel extends THREE.Object3D{
               }
             }
           }
-        }else {
+        }else if (this.insertando && i > this.indexInsertando) {
+          if (this.retrocedo<=avance) {
+            bola.avanzado-=this.retrocedo;
+            var copiaBola = this.disparador.bola.clone();//new THREE.Object3D();
+            //this.disparador.bola.copy(copiaBola);
+            this.bolas.vector.splice(this.indexInsertando+1,0,copiaBola);
+            this.add(copiaBola);
+            copiaBola.avanzado=this.bolas.vector[this.indexInsertando].avanzado - 2/this.splineLongitud;
+            copiaBola.enOctree = false;
+            this.cargarDisparador();
+            this.insertando=false;
+            //console.log("Insertando: "+this.retrocedo);
+          }else{
+            bola.avanzado-=avance;
+            if (i==(this.bolas.vector.length - 1)) {
+              console.log(2/this.splineLongitud);
+              console.log("Insertando: "+this.retrocedo);
+              this.retrocedo-=avance;
+            }
+          }
+        } else {
           bola.avanzado+=avance;
         }
 
