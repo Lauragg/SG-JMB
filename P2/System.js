@@ -361,10 +361,9 @@ class contVarNiveles {
        this.sistema.reintentar();
      }
    }
-
-   siguienteNivel(){
-     this.sistema.actualizarNivel();
-   }
  }
 
+ function siguienteNivel(juego){
+   juego.sistema.actualizarNivel();
+ }
   var juego = new Juego();
