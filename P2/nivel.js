@@ -35,6 +35,14 @@ class Nivel extends THREE.Object3D{
     this.add(this.bolas);
     this.add(this.disparador);
 
+    /*var geometryLine= new THREE.Geometry();
+    geometryLine.vertices = this.spline.getPoints(100);
+    var visibleSpline= new THREE.Line(geometryLine,new THREE.LineBasicMaterial({color:0xff0000}));*/
+    //this.add(this.decoraciones);
+
+    //this.add(visibleSpline);
+
+    //
     this.tiempoAnterior = Date.now();
 
   }
@@ -70,6 +78,12 @@ class Nivel extends THREE.Object3D{
 
     var camino = new THREE.Mesh(semicirculo, new THREE.MeshPhongMaterial({color: 0xf08080}));
 
+    //var superficie = new THREE.Object3D();
+    //superficie.position.set(0,-0.5,0);
+
+    //superficie.add(plano);
+    //this.add(camino);
+    //plano.position.set(0,-0.5,0);
     plano.geometry.computeBoundingBox();
 
     return plano;
@@ -77,7 +91,14 @@ class Nivel extends THREE.Object3D{
 
   createDisparador(posDisparador){
     var disparador = new THREE.Object3D();
+    /*disparador.bola = this.createBola();
+    disparador.apuntador = new THREE.Mesh(new THREE.BoxGeometry(2,1,1), new THREE.MeshPhongMaterial({color: 0xf08080}));
+    disparador.apuntador.position.set(1,0,0);
+    disparador.disparo = false;
+    disparador.position.set(posDisparador.x,posDisparador.y,posDisparador.z);
 
+    disparador.add(disparador.bola);
+    disparador.add(disparador.apuntador);*/
 
     var materialLoader = new THREE.MTLLoader();
     var objectLoader = new THREE.OBJLoader();
@@ -244,7 +265,7 @@ class Nivel extends THREE.Object3D{
 
     //console.log("Posiciones "+this.posiciones);//posiciones[0]+" "+posiciones[posiciones.length-1]);
     var diferencia=this.posiciones[this.posiciones.length-1]-this.posiciones[0]+1;
-    //console.log("Eliminaciones "+this.bolas.splice(this.posiciones[0],diferencia));
+    this.bolas.splice(this.posiciones[0],diferencia);
     this.retrocediendo=true;
     this.retrocedo=2*(diferencia)/this.splineLongitud;
 
