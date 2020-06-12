@@ -35,14 +35,6 @@ class Nivel extends THREE.Object3D{
     this.add(this.bolas);
     this.add(this.disparador);
 
-    /*var geometryLine= new THREE.Geometry();
-    geometryLine.vertices = this.spline.getPoints(100);
-    var visibleSpline= new THREE.Line(geometryLine,new THREE.LineBasicMaterial({color:0xff0000}));*/
-    //this.add(this.decoraciones);
-
-    //this.add(visibleSpline);
-
-    //
     this.tiempoAnterior = Date.now();
 
   }
@@ -78,12 +70,6 @@ class Nivel extends THREE.Object3D{
 
     var camino = new THREE.Mesh(semicirculo, new THREE.MeshPhongMaterial({color: 0xf08080}));
 
-    //var superficie = new THREE.Object3D();
-    //superficie.position.set(0,-0.5,0);
-
-    //superficie.add(plano);
-    //this.add(camino);
-    //plano.position.set(0,-0.5,0);
     plano.geometry.computeBoundingBox();
 
     return plano;
@@ -91,14 +77,7 @@ class Nivel extends THREE.Object3D{
 
   createDisparador(posDisparador){
     var disparador = new THREE.Object3D();
-    /*disparador.bola = this.createBola();
-    disparador.apuntador = new THREE.Mesh(new THREE.BoxGeometry(2,1,1), new THREE.MeshPhongMaterial({color: 0xf08080}));
-    disparador.apuntador.position.set(1,0,0);
-    disparador.disparo = false;
-    disparador.position.set(posDisparador.x,posDisparador.y,posDisparador.z);
 
-    disparador.add(disparador.bola);
-    disparador.add(disparador.apuntador);*/
 
     var materialLoader = new THREE.MTLLoader();
     var objectLoader = new THREE.OBJLoader();
@@ -128,24 +107,6 @@ class Nivel extends THREE.Object3D{
     return disparador;
   }
 
-/*  iniciarAnimacion(){
-    this.animacion=true;
-  }*/
-
-  /*disparar(event){
-    var mouse = new THREE.Vector3(
-      (event.clientX / window.innerWidth)*2-1,
-      0,
-      1-2*(event.clientY / window.innerHeight)
-    );
-
-    var worldPosition = new THREE.Vector3();
-    this.disparador.bola.getWorldPosition(worldPosition)
-    this.disparador.vectorAvance = worldPosition.sub(mouse);
-    console.log(this.disparador.vectorAvance);
-    this.disparador.disparo=true;
-  }
-*/
   eventos(event){
     var tecla = event.which || event.keyCode;
     if(!this.disparador.disparo){ // Para que no se mueva la bola cuando aún se está disparando
@@ -159,9 +120,7 @@ class Nivel extends THREE.Object3D{
         console.log("Retrocediendo: "+this.retrocediendo);
         if (!this.insertando && !this.retrocediendo) {
           this.disparador.disparo = true;
-        }//else {
-          //this.animacion=true;
-        //}
+        }
       }
     }
   }
@@ -201,32 +160,6 @@ class Nivel extends THREE.Object3D{
           this.disparador.disparo=false;
           var index=this.bolas.indexOf(bola.object);
           this.insertarBolas(index);
-          /*if(bola.object.colorHex == this.disparador.bola.colorHex){
-            var index=this.bolas.indexOf(bola.object);
-            if (index>0 && this.bolas[index-1].colorHex == this.disparador.bola.colorHex) {
-              console.log("Primero");
-              this.borrarBolas(index,this.disparador.bola.colorHex);
-              this.cargarDisparador();
-            }else if (index < this.bolas.length -1 && this.bolas[index+1].colorHex == this.disparador.bola.colorHex) {
-              console.log("Segundo");
-              this.borrarBolas(index,this.disparador.bola.colorHex);
-              this.cargarDisparador();
-            }else {
-              this.insertarBolas(index);
-              this.disparador.disparo=false;
-            }
-          }else {
-            var index=this.bolas.indexOf(bola.object);
-            this.disparador.disparo=false;
-            this.insertarBolas(index);
-          }
-          console.log("HOli");*/
-          //this.cargarDisparador();
-
-          /*console.log(bola);
-          console.log(distX+" "+distZ);
-          console.log("Position disparo:"+position.x +" "+position.y+" "+position.z);
-          console.log("Position bola i="+ i +" :"+bola.object.position.x +" "+bola.object.position.y+" "+bola.object.position.z);*/
         }
       });
     }
@@ -311,7 +244,7 @@ class Nivel extends THREE.Object3D{
 
     //console.log("Posiciones "+this.posiciones);//posiciones[0]+" "+posiciones[posiciones.length-1]);
     var diferencia=this.posiciones[this.posiciones.length-1]-this.posiciones[0]+1;
-    console.log("Eliminaciones "+this.bolas.splice(this.posiciones[0],diferencia));
+    //console.log("Eliminaciones "+this.bolas.splice(this.posiciones[0],diferencia));
     this.retrocediendo=true;
     this.retrocedo=2*(diferencia)/this.splineLongitud;
 
@@ -319,8 +252,7 @@ class Nivel extends THREE.Object3D{
       siguienteNivel(juego);
     }
 
-    //console.log("Retrocedo:  "+this.retrocedo);
-    //console.log("");
+
   }
 
   insertarBolas(index){

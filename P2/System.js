@@ -171,11 +171,6 @@ class System extends THREE.Scene{
     return niveles;
   }
 
-  /*
-    FIXME: Actualmente es copypaste de la P1.
-    Hay que configurarlo para el tema de SOMBRAS, LUCES, etc....
-    Últimos temas de teoría.
-  */
   createRenderer (myCanvas) {
     // Se recibe el lienzo sobre el que se van a hacer los renderizados. Un div definido en el html.
 
@@ -195,11 +190,6 @@ class System extends THREE.Scene{
   }
 
 
-  /*
-    FIXME: Actualmente es copypaste de la P1.
-    Hay que configurarlo para el tema de SOMBRAS, LUCES, etc....
-    Últimos temas de teoría.
-  */
   createLights () {
     // Se crea una luz ambiental, evita que se vean complentamente negras las zonas donde no incide de manera directa una fuente de luz
     // La luz ambiental solo tiene un color y una intensidad
@@ -218,11 +208,7 @@ class System extends THREE.Scene{
     this.add (this.spotLight);
   }
 
-  /*
-    FIXME: Actualmente es copypaste de la P1.
-    Hay que configurarlo para el tema de SOMBRAS, LUCES, etc....
-    Últimos temas de teoría.
-  */
+
   createCamera () {
     // Para crear una cámara le indicamos
     //   El ángulo del campo de visión vértical en grados sexagesimales
