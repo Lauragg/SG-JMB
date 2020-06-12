@@ -155,6 +155,8 @@ class Nivel extends THREE.Object3D{
         this.disparador.rotation.y-=0.02;
       // Evento de disparo
       }else if (String.fromCharCode(tecla) == "" || String.fromCharCode(tecla) == " ") {
+        console.log("Insertando: "+this.insertando);
+        console.log("Retrocediendo: "+this.retrocediendo);
         if (!this.insertando && !this.retrocediendo) {
           this.disparador.disparo = true;
         }//else {
@@ -235,14 +237,36 @@ class Nivel extends THREE.Object3D{
   }
 
   comprobarBolas(index){
-    if (index>0 && this.bolas.vector[index-1].colorHex == this.bolas.vector[index].colorHex) {
-      console.log("Primero");
+    var numMismoColor = 1; // La bola que disparamos tiene el mismo color que ella misma.
+    // Primero nos aseguramos de que este dentro de los límites
+    if (index >= 0 && index < this.bolas.vector.length) {
+      /*
+        A continuación comprobamos el número de bolas del mismo color.
+        Casos:
+         - Las dos de delante son del mismo color.
+         - La de delante y la de atrás son del mismo color.
+         - Las dos de atrás son del mismo color.
+      */
+      if (index>0 && this.bolas.vector[index-1].colorHex == this.bolas.vector[index].colorHex) {
+        console.log("La de delante");
+        numMismoColor++;
+        if (index > 1 && this.bolas.vector[index-2].colorHex == this.bolas.vector[index].colorHex) {
+          console.log("Las dos de delante");
+          numMismoColor++;
+        }
+      }
+      if (index < this.bolas.vector.length -1 && this.bolas.vector[index+1].colorHex == this.bolas.vector[index].colorHex) {
+        console.log("La de atrás");
+        numMismoColor++;
+        if (index < this.bolas.vector.length -2 && this.bolas.vector[index+2].colorHex == this.bolas.vector[index].colorHex) {
+          console.log("Las dos de atrás");
+          numMismoColor++;
+        }
+      }
+    }
+
+    if (numMismoColor>=3) {
       this.borrarBolas(index,this.bolas.vector[index].colorHex);
-      //this.cargarDisparador();
-    }else if (index < this.bolas.vector.length -2 && this.bolas.vector[index+1].colorHex == this.bolas.vector[index].colorHex) {
-      console.log("Segundo");
-      this.borrarBolas(index,this.bolas.vector[index].colorHex);
-      //this.cargarDisparador();
     }else {
       this.cargarDisparador();
     }
@@ -334,20 +358,25 @@ class Nivel extends THREE.Object3D{
         Avance bolas por recorrido
       */
       this.bolas.vector.forEach((bola, i) => {
-        if (this.retrocediendo && this.posiciones[0] != 0) {
-          if (i < this.posiciones[0]) {
-            if (this.retrocedo<=avance) {
-              bola.avanzado-=this.retrocedo;
-              this.retrocediendo=false;
-              console.log("Retrocediendo: "+this.retrocedo);
-              this.comprobarBolas(this.posiciones[0]);
-            }else{
-              bola.avanzado-=avance;
-              if (i==0) {
-                this.retrocedo-=avance;
+        if (this.retrocediendo) {
+          if (this.posiciones[0] != 0) {
+            if (i < this.posiciones[0]) {
+              if (this.retrocedo<=avance) {
+                bola.avanzado-=this.retrocedo;
+                this.retrocediendo=false;
+                console.log("Retrocediendo: "+this.retrocedo);
+                this.comprobarBolas(this.posiciones[0]);
+              }else{
+                bola.avanzado-=avance;
+                if (i==0) {
+                  this.retrocedo-=avance;
+                }
               }
             }
+          }else {
+            this.retrocediendo=false;
           }
+
         }else if (this.insertando && i > this.indexInsertando) {
           if (this.retrocedo<=avance) {
             bola.avanzado-=this.retrocedo;
