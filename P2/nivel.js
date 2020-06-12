@@ -239,7 +239,7 @@ class Nivel extends THREE.Object3D{
       console.log("Primero");
       this.borrarBolas(index,this.bolas.vector[index].colorHex);
       this.cargarDisparador();
-    }else if (index < this.bolas.vector.length -1 && this.bolas.vector[index+1].colorHex == this.bolas.vector[index].colorHex) {
+    }else if (index < this.bolas.vector.length -2 && this.bolas.vector[index+1].colorHex == this.bolas.vector[index].colorHex) {
       console.log("Segundo");
       this.borrarBolas(index,this.bolas.vector[index].colorHex);
       this.cargarDisparador();
@@ -338,6 +338,7 @@ class Nivel extends THREE.Object3D{
               bola.avanzado-=this.retrocedo;
               this.retrocediendo=false;
               console.log("Retrocediendo: "+this.retrocedo);
+              this.comprobarBolas(this.posiciones[0]);
             }else{
               bola.avanzado-=avance;
               if (i==0) {
